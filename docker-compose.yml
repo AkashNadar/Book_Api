@@ -6,36 +6,39 @@ services:
     container_name: mysql_db
     restart: unless-stopped
     environment:
+      MYSQL_DATABASE: dbname
       MYSQL_USER: newUser
       MYSQL_PASSWORD: password
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: dbname
-
     volumes:
-      - my-db:/var/lib/mysql
+      - ./my-db:/var/lib/mysql
     ports:
-      - "3306:3306"
+      - "3308:3306"
     networks:
-      - proxyNet
+      proxyNet:
+        ipv4_address: 192.168.92.20
 
   go:
     build:
       context: .
     container_name: go
     restart: on-failure
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3308
+      - DB_NAME=dbname
+      - DB_USER=root
+      - DB_PASSWORD=password
     ports:
       - 9010:9010
     depends_on:
       - "db"
     networks:
-      - proxyNet
-    
-
-volumes:
-  my-db:
+      proxyNet:
+        ipv4_address: 192.168.92.21
 
 networks:
   proxyNet:
-    driver: "bridge"
-
-
+    ipam:
+      driver: default
+      config:
+        - subnet: "192.168.92.0/24"

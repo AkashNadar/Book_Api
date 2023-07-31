@@ -9,6 +9,7 @@ services:
       MYSQL_DATABASE: dbname
       MYSQL_USER: newUser
       MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
     volumes:
       - ./my-db:/var/lib/mysql
     ports:
